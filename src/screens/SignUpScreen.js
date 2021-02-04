@@ -1,46 +1,29 @@
-import React, { useState, useContext } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Text, Input, Button } from 'react-native-elements';
-import  Spacer  from '../components/Spacer';
-import { Context as AuthContext } from '../context/AuthContext'
+import React, { useContext } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Context as AuthContext } from '../context/AuthContext';
+import AuthForm from '../components/AuthForm';
+import NavLink from '../components/NavLink';
+import { NavigationEvents } from 'react-navigation'
 
 const SignUpScreen = ({navigation}) => {
-    const { state, singup } = useContext(AuthContext)
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('')
+    const { state, signup, clearErrorMessage } = useContext(AuthContext)
 
-    console.log(state)
 
     return ( 
     <View style={styles.container}>
-        <Spacer>
-            <Text h3>Sing Up for Trackers</Text>
-        </Spacer>
-        <Input 
-            label="Email"
-            value={email} 
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            autoCorrect={false}
+        <NavigationEvents 
+            onWillFocus={clearErrorMessage}
         />
-        <Spacer />
-        <Input 
-            label="Password" 
-            value={password} 
-            onChangeText={setPassword}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry
+        <AuthForm 
+            headerText="Sign up for Tracker"
+            errorMessage={state.errorMessage}
+            submitButtonText="Sign Up"
+            onSubmit={({ email, password }) => signup({ email, password })}
         />
-        {state.errorMessage ? (
-        <Text style={styles.errorMessage}>{state.errorMessage}</Text>
-        ) : null}
-        <Spacer>
-            <Button title="Sign Up" onPress={() => singup({email, password})}/>
-        </Spacer>   
-        <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-            <Text>Already have an Account? Sign in</Text>
-        </TouchableOpacity>
+        <NavLink 
+            text="al ready have an account? sign in instead"
+            routeName="Signin"
+        />
     </View>
     )
 };
@@ -63,7 +46,8 @@ const styles = StyleSheet.create({
         color: 'red',
         marginLeft: 15,
         marginTop: 15
-    }
+    },
+    
 });
 
 export default SignUpScreen
